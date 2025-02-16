@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class GameState {
 
-    final int[][] board; // 3x3 board representing the 8 tile puzzle (could also use a 1d array but I thought 3x3 is more intuitive)
+    private final int[][] board; // 3x3 board representing the 8 tile puzzle (could also use a 1d array but I thought 3x3 is more intuitive)
     private int emptyRow; // the row position of the empty cell (0)
     private int emptyCol; // the col position of the empty cell (0)
     static final int[][] INIT_BOARD = { // init board config, choose the same layout as the labs
@@ -53,6 +53,10 @@ public class GameState {
 
     public int getEmptyCol() {
         return this.emptyCol;
+    }
+
+    public int[][] getBoard(){
+        return this.board;
     }
 
     public void setEmptyRow(int newRow) {

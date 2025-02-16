@@ -15,10 +15,11 @@ public class Node implements Comparable<Node> {
         this.cost = cost;
         this.heuristic = heuristic;
         this.isAStar = isAStar;
+
     }
 
     public Node(GameState state, boolean isAStar) {
-        this(state, null, 0, 0, isAStar);
+        this(state, null, 0, 0,isAStar);
     }
 
     public Node(GameState state, Node parent) {
