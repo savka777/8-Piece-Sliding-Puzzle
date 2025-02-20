@@ -1,7 +1,3 @@
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-
 public class Node implements Comparable<Node> {
     GameState state;
     Node parent;
@@ -15,12 +11,15 @@ public class Node implements Comparable<Node> {
         this.cost = cost;
         this.heuristic = heuristic;
         this.isAStar = isAStar;
-
     }
 
-    public Node(GameState state, boolean isAStar) {
-        this(state, null, 0, 0,isAStar);
+    public Node(GameState state, Node parent, int cost, int heuristic) {
+        this.state = state;
+        this.parent = parent;
+        this.cost = cost;
+        this.heuristic = heuristic;
     }
+
 
     public Node(GameState state, Node parent) {
         this.state = state;
@@ -36,13 +35,7 @@ public class Node implements Comparable<Node> {
         return this.heuristic;
     }
 
-    public static Node findNodeWithState(Iterable<Node> nodes, GameState gs) {
-        for (Node n : nodes) {
-            if (gs.sameBoard(n.state)) return n;
-        }
-        return null;
-    }
-
+    // Define natural ordering for priority queue (heuristic and cost (A*) / cost (UCS))
     @Override
     public int compareTo(Node o) {
         if (this.isAStar) {
@@ -52,6 +45,21 @@ public class Node implements Comparable<Node> {
         } else {
             return Integer.compare(this.cost, o.cost);
         }
+    }
+
+    // each node is compared based on it's game state
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(!(o instanceof Node)) return false;
+
+        Node other = (Node) o;
+        return this.state.equals(other.state);
+    }
+
+    @Override
+    public int hashCode(){
+        return this.state.hashCode();
     }
 
     @Override

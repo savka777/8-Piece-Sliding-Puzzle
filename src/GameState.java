@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class GameState {
 
@@ -55,7 +56,7 @@ public class GameState {
         return this.emptyCol;
     }
 
-    public int[][] getBoard(){
+    public int[][] getBoard() {
         return this.board;
     }
 
@@ -71,17 +72,6 @@ public class GameState {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (this.board[i][j] != GOAL_BOARD[i][j]) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    public boolean sameBoard(GameState g) { // checking to see if the board is the same, necessary for avoid cycles and optimization
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (this.board[i][j] != g.board[i][j]) {
                     return false;
                 }
             }
@@ -125,6 +115,40 @@ public class GameState {
         }
         return false;
     }
+
+   /*
+   * Overriding equals and hashcode to do comparison checks, since by default objects are compared by reference in memory,
+   * I can do my own custom comparisons based of the values inside the game state.
+   * */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof GameState)) return false;
+
+        GameState other = (GameState) o;
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (this.board[i][j] != other.board[i][j]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    // faster looks
+    @Override
+    public int hashCode(){
+        int hash = 6;
+        for(int i = 0; i < 3;i++){
+            for(int j = 0; j < 3; j++){
+                hash = 31 * hash + this.board[i][j];
+            }
+        }
+        return hash;
+    }
+
 
     @Override
     public String toString() {
