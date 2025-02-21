@@ -2,23 +2,30 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class GameState {
+    /**
+     * Main Game State configurations,
+     * 1. 2D array representing a 3x3 tile board
+     * 2. Fields empty row and empty column to get the position of the empty cell, which is represented as 0
+     * 3. Initial Board configuration to the one that was provided in the lab
+     * 4. Goal Board, representing the goal of the 8 puzzle problem
+     */
 
-    private final int[][] board; // 3x3 board representing the 8 tile puzzle (could also use a 1d array but I thought 3x3 is more intuitive)
-    private int emptyRow; // the row position of the empty cell (0)
-    private int emptyCol; // the col position of the empty cell (0)
-    static final int[][] INIT_BOARD = { // init board config, choose the same layout as the labs
+    private final int[][] board;
+    private int emptyRow;
+    private int emptyCol;
+    static final int[][] INIT_BOARD = {
             {8, 7, 6},
             {5, 4, 3},
             {2, 1, 0}
     };
 
-    static final int[][] GOAL_BOARD = { // goal board
+    static final int[][] GOAL_BOARD = {
             {1, 2, 3},
             {4, 5, 6},
             {7, 8, 0}
     };
 
-    private static final int[][] DIRECTIONS = { // map the directions, since immutable declared here
+    private static final int[][] DIRECTIONS = {
             {-1, 0}, // up (row = -1, col = 0)
             {1, 0}, // down (row = +1, col = 0)
             {0, -1}, // left (row = 0, col = -1)
@@ -38,7 +45,12 @@ public class GameState {
         }
     }
 
-    public GameState cloneBoard() { // clone the board, then later generate successors from cloned board
+    /**
+     * Clones the board inorder to generate possible successors from a given game state
+     *
+     * @return new GameState
+     */
+    public GameState cloneBoard() {
         int[][] clonedBoard = new int[3][3];
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -68,7 +80,12 @@ public class GameState {
         this.emptyCol = newCol;
     }
 
-    public boolean isGoal() { // speaks for itself, check is the current board config is the goal state
+    /**
+     * Compares the current board configuration to the goal state
+     *
+     * @return False if not goal state, otherwise return True
+     */
+    public boolean isGoal() {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (this.board[i][j] != GOAL_BOARD[i][j]) {
@@ -79,7 +96,14 @@ public class GameState {
         return true;
     }
 
-    public ArrayList<GameState> possibleMoves() { // generate successors (all possible valid moves)
+    /**
+     * Generates all valid successors for a given game state by checking,
+     * if a given empty position (0) can be moved in either of the 4 directions (up,down,left,right),
+     * if empty position can be moved, it generates a successor and stores it in a list of possible moves
+     *
+     * @return ArrayList of GameState
+     */
+    public ArrayList<GameState> possibleMoves() {
         ArrayList<GameState> moves = new ArrayList<GameState>();
 
         // for each direction
@@ -109,17 +133,27 @@ public class GameState {
         return moves;
     }
 
-    public boolean checkIfValidPosition(int r, int c) { // helper, making sure positions are valid on the 3x3 grid
+    /**
+     * Helper method to check if a position if valid for the possibleMoves() method,
+     * Check if the empty cell is within bounds of the board
+     *
+     * @return True if position is valid, otherwise return False
+     */
+    public boolean checkIfValidPosition(int r, int c) {
         if (r >= 0 && r < 3 && c >= 0 && c < 3) {
             return true;
         }
         return false;
     }
 
-   /*
-   * Overriding equals and hashcode to do comparison checks, since by default objects are compared by reference in memory,
-   * I can do my own custom comparisons based of the values inside the game state.
-   * */
+    /**
+     * Defining a custom equals method to override the standard equals from Java.
+     * Reason: Default objects are compared based on reference in memory, this is not suitable for a campirson in game states.
+     * If two games states have identical board configurations but are two distinct objects, Java will rule this comparison as False.
+     * This custom equals compares based on the game state board configurations and NOT reference in memory.
+     *
+     * @return True if two game states are equal, otherwise return false
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -127,6 +161,7 @@ public class GameState {
 
         GameState other = (GameState) o;
 
+        // Compare if two boards are the same
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (this.board[i][j] != other.board[i][j]) {
@@ -137,18 +172,22 @@ public class GameState {
         return true;
     }
 
-    // faster looks
+    /**
+     * Generates a unique hash code for a given game state.
+     * Reason: Faster and Correct lookups using a hashset
+     * Two objects that have the same logical state of board configurations produce the same hash state,
+     * rather than being based on memory address and object reference
+     */
     @Override
-    public int hashCode(){
+    public int hashCode() {
         int hash = 6;
-        for(int i = 0; i < 3;i++){
-            for(int j = 0; j < 3; j++){
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
                 hash = 31 * hash + this.board[i][j];
             }
         }
         return hash;
     }
-
 
     @Override
     public String toString() {
@@ -156,7 +195,7 @@ public class GameState {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (board[i][j] == 0) {
-                    sb.append("  "); // represent the blank
+                    sb.append("  ");
                 } else {
                     sb.append(board[i][j]).append(" ");
                 }
